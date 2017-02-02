@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Eclipse-ExtensibleAPI: true
+Bundle-ManifestVersion: 2
+Bundle-Name: Pentaho CDA Plugin
+Bundle-SymbolicName: co.zooloop.jasperreports.studio.data.pentahocda;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: co.zooloop.jasperreports.studio.data.pentahocda.Activator
+Bundle-Vendor: Circulo Naranja SAS
+Require-Bundle: com.jaspersoft.studio.data;bundle-version="6.4.1";visibility:=reexport,
+ com.jaspersoft.studio.server;bundle-version="6.4.1"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
+ JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Eclipse-RegisterBuddy: com.jaspersoft.studio.data
+Bundle-ClassPath: patch-library.jar,
+ .,
+ lib/pentaho-cda-datasource-1.0.0.jar
