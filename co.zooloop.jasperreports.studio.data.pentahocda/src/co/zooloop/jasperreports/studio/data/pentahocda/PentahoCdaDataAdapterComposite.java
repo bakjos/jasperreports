@@ -5,10 +5,28 @@
 package co.zooloop.jasperreports.studio.data.pentahocda;
 
 import net.sf.jasperreports.data.DataAdapter;
+import net.sf.jasperreports.data.DataAdapterService;
+import net.sf.jasperreports.data.DataAdapterServiceUtil;
+import net.sf.jasperreports.eclipse.ui.util.UIUtils;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JasperReportsContext;
+import net.sf.jasperreports.engine.ParameterContributorContext;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -21,14 +39,17 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-
+import com.ibm.icu.util.StringTokenizer;
 import com.jaspersoft.studio.JaspersoftStudioPlugin;
 import com.jaspersoft.studio.data.ADataAdapterComposite;
 import com.jaspersoft.studio.data.DataAdapterDescriptor;
 import com.jaspersoft.studio.data.secret.DataAdaptersSecretsProvider;
 import com.jaspersoft.studio.swt.widgets.WSecretText;
+import com.jaspersoft.studio.utils.jasper.JasperReportsConfiguration;
+import com.jaspersoft.studio.utils.jobs.CheckedRunnableWithProgress;
 
 import co.zooloop.jasperreports.adapter.PentahoCdaDataAdapter;
+import co.zooloop.jasperreports.connection.PentahoCdaConnection;
 import co.zooloop.jasperreports.studio.data.pentahocda.messages.Messages;
 
 /**
@@ -46,6 +67,7 @@ public class PentahoCdaDataAdapterComposite extends ADataAdapterComposite {
 	private WSecretText passwordField;
 	private Button sugarMode;
 	private Button browsePath;
+	private int nextRowSelection = -1;
 
 	private PentahoCdaDataAdapterDescriptor dataAdapterDescriptor;
 
@@ -53,6 +75,8 @@ public class PentahoCdaDataAdapterComposite extends ADataAdapterComposite {
 		super(parent, style, jrContext);
 		initComponents();
 	}
+	
+	
 
 	private void initComponents() {
 		setLayout(new GridLayout(6, false));
@@ -85,12 +109,57 @@ public class PentahoCdaDataAdapterComposite extends ADataAdapterComposite {
 		browsePath.setText("Browse");
 		browsePath.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false, 1, 1));
 		
+		
+		
 		browsePath.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				PentahoFileBrowserDialog dialog = new PentahoFileBrowserDialog(Display.getDefault().getActiveShell());
-				dialog.open();
+				
+				final PentahoCdaDataAdapter dataAdapter = dataAdapterDescriptor.getDataAdapter(); 
+						
+				if ( StringUtils.isBlank(dataAdapter.getBaseUrl()) ) {
+					MessageDialog.open(MessageDialog.ERROR, getShell(), "Error", "The server url cannot be empty ", SWT.SHEET);
+					serverUrlField.setFocus();
+					return;
+				}
+				try {
+					DataAdapterService daService = DataAdapterServiceUtil.getInstance(new ParameterContributorContext( getJrContext(), null, null)).getService(dataAdapter);
+					Map<String, Object> parameters = new HashMap<String, Object>();
+					daService.contributeParameters(parameters);
+					PentahoCdaConnection connection =  (PentahoCdaConnection) parameters.get(JRParameter.REPORT_CONNECTION);
+					
+					PentahoFileBrowserDialog dialog = new PentahoFileBrowserDialog(Display.getDefault().getActiveShell(), connection);
+					String path = "/";
+					String fileName = null;
+					if ( !StringUtils.isBlank(dataAdapter.getPath())  ) {
+						StringTokenizer st = new StringTokenizer(dataAdapter.getPath(), "/");
+						String _path = "";
+						while (st.hasMoreTokens()) {
+							String currentToken = st.nextToken();
+							if ( st.hasMoreTokens()) {
+								_path += "/" + currentToken; 
+							} else {
+								fileName = currentToken;
+							}
+						}
+						
+						if ( !_path.isEmpty()) {
+							path = _path;
+						}
+					}
+					
+					if ( dialog.loadPath(path, fileName) ) {
+						if ( dialog.open() == Window.OK ) {
+							pathField.setText(dialog.getSelectedPath());
+						}
+					}
+					
+					connection.close();
+					daService.dispose();
+				} catch(Exception ex) {
+					UIUtils.showErrorDialog("Error loading the connection", ex);
+				}
 			}
 			
 			@Override
@@ -140,7 +209,8 @@ public class PentahoCdaDataAdapterComposite extends ADataAdapterComposite {
 		bindingContext.bindValue(SWTObservables.observeText(usernameField, SWT.Modify), PojoObservables.observeValue(dataAdapter, "username")); //$NON-NLS-1$
 		bindingContext.bindValue(SWTObservables.observeText(solutionField, SWT.Modify), PojoObservables.observeValue(dataAdapter, "solution")); //$NON-NLS-1$
 		bindingContext.bindValue(SWTObservables.observeText(pathField, SWT.Modify), PojoObservables.observeValue(dataAdapter, "path")); //$NON-NLS-1$
-		bindingContext.bindValue(SWTObservables.observeSelection(sugarMode), PojoObservables.observeValue(dataAdapter, "sugarMode"));
+		bindingContext.bindValue(SWTObservables.observeText(passwordField, SWT.Modify), PojoObservables.observeValue(dataAdapter, "password"));
+		
 	}
 
 	@Override

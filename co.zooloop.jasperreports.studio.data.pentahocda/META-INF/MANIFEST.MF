@@ -14,4 +14,8 @@ Bundle-ActivationPolicy: lazy
 Eclipse-RegisterBuddy: com.jaspersoft.studio.data
 Bundle-ClassPath: patch-library.jar,
  .,
- lib/pentaho-cda-datasource-1.0.0.jar
+ lib/pentaho-cda-datasource-1.0.0.jar,
+ lib/commons-httpclient-3.0.1.jar,
+ lib/pentaho-reporting-engine-classic-core-7.0.0.0-25.jar,
+ lib/pentaho-reporting-engine-classic-extensions-cda-7.0.0.0-25.jar,
+ lib/libbase-7.0.0.0-25.jar

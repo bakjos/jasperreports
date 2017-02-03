@@ -17,6 +17,10 @@ public class Activator extends AbstractJRUIPlugin {
     public static final String PLUGIN_ID = "co.zooloop.jasperreports.studio.data.pentahocda"; //$NON-NLS-1$
 
     public static final String ICON_NAME = "icons/pentaho.png";
+    
+    public static final String FOLDER_ICON_NAME = "icons/folder.png";
+    
+    public static final String CDA_ICON_NAME = "icons/document.gif";
 
     // The shared instance
     private static Activator plugin;
