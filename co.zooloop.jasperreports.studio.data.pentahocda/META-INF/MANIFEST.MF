@@ -6,8 +6,7 @@ Bundle-SymbolicName: co.zooloop.jasperreports.studio.data.pentahocda;singleton:=
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: co.zooloop.jasperreports.studio.data.pentahocda.Activator
 Bundle-Vendor: Circulo Naranja SAS
-Require-Bundle: com.jaspersoft.studio.data;bundle-version="6.4.1";visibility:=reexport,
- com.jaspersoft.studio.server;bundle-version="6.4.1"
+Require-Bundle: com.jaspersoft.studio.data;bundle-version="6.3.1";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6,
  JavaSE-1.7
 Bundle-ActivationPolicy: lazy

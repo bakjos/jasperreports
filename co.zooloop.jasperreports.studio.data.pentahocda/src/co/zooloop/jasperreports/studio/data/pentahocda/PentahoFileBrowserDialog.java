@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.xml.bind.JAXB;
 
@@ -41,7 +42,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
-import com.ibm.icu.util.StringTokenizer;
+
 import com.jaspersoft.studio.utils.jobs.CheckedRunnableWithProgress;
 
 import co.zooloop.jasperreports.connection.PentahoCdaConnection;
