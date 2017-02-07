@@ -78,17 +78,6 @@ public class PentahoFileBrowserDialog extends TrayDialog {
 	private int rowSel = -1;
 	
 	
-	private class ListContentProvider implements IStructuredContentProvider {
-
-		@Override
-		public Object[] getElements(Object inputElement) {
-			if (inputElement != null && inputElement instanceof List)
-				return ((List<?>) inputElement).toArray();
-			return new Object[0];
-		}
-		
-	}
-	
 	private class ColumnIndexLabelProvider extends ColumnLabelProvider {
 		private int columnIndex;
 

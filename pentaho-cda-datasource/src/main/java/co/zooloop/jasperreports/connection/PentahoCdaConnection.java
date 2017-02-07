@@ -1,5 +1,6 @@
 package co.zooloop.jasperreports.connection;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -40,6 +41,7 @@ import org.pentaho.reporting.engine.classic.core.ReportDataFactoryException;
 import org.pentaho.reporting.engine.classic.core.util.TypedTableModel;
 import org.pentaho.reporting.engine.classic.extensions.datasources.cda.CdaQueryBackend;
 import org.pentaho.reporting.engine.classic.extensions.datasources.cda.CdaResponseParser;
+import org.pentaho.reporting.libraries.base.util.IOUtils;
 import org.pentaho.reporting.libraries.base.util.ObjectUtilities;
 
 import net.sf.jasperreports.engine.JRException;
@@ -374,9 +376,15 @@ public class PentahoCdaConnection implements Connection {
 		return url.toString();
 	}
 	
-	public TypedTableModel fetchData (final String method, final Map<String, String> extraParameter) throws JRException {
+	public TypedTableModel fetchData (final String method,  Map<String, String> extraParameter) throws JRException {
 		if ( !local ) {
-			String url = createURL(method, new HashMap());
+			
+			if ( extraParameter == null) {
+				extraParameter = new HashMap();
+			}
+			
+			String url = createURL(method, extraParameter);
+			
 			final GetMethod httpCall = new GetMethod( url.toString() );
 			final HttpClient client = getHttpClient();
 		    int status;
@@ -390,7 +398,17 @@ public class PentahoCdaConnection implements Connection {
 						throw new JRException("Failed to parse data: " + e.getMessage());	
 					}
 				} else {
-					throw new JRException("Failed to retrieve data: " + httpCall.getStatusLine());
+					
+					try {
+						InputStream is =  httpCall.getResponseBodyAsStream();
+						ByteArrayOutputStream bos = new ByteArrayOutputStream();
+						IOUtils.getInstance().copyStreams(is, bos);	
+						throw new JRException("Failed to retrieve data: " + new String(bos.toByteArray()));
+					} catch(JRException ex) {
+						throw ex;
+					} catch (Exception ex) {
+						throw new JRException("Failed to retrieve data: " + httpCall.getStatusLine());
+					}
 				}
 			} catch (HttpException e) {
 				throw new JRException(e);
@@ -408,28 +426,9 @@ public class PentahoCdaConnection implements Connection {
 	}
 
 	public String test() throws JRException {
-
-		if (!local) {
-			String url = createURL("listQueries", new HashMap());
-			
-			final GetMethod httpCall = new GetMethod( url.toString() );
-			final HttpClient client = getHttpClient();
-		    int status;
-			try {
-				status = client.executeMethod( httpCall );
-				if ( status == 200) {
-			    	return "Connection test successful";
-			    } else {
-			    	 throw new JRException( "Failed to retrieve data: " + httpCall.getStatusLine() );
-			    }
-			} catch (HttpException e) {
-				throw new JRException(e);
-			} catch (IOException e) {
-				throw new JRException(e);
-			} 
-		    
-		}
-		//TODO; make the local call
+		Map<String, String> extraParameters = new HashMap<String, String>();
+    	extraParameters.put("dataAccessId", getDataAccessId());
+		fetchData("listParameters", extraParameters);
 		return null;
 	}
 

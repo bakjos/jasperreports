@@ -24,9 +24,9 @@ public interface PentahoCdaDataAdapter extends DataAdapter {
 
 	void setFile(String file);
 
-	boolean isSugarMode();
+	boolean isPentaho5();
 
-	void setSugarMode(boolean sugarMode);
+	void setPentaho5(boolean pentaho5);
 
 	String getBaseUrl();
 		

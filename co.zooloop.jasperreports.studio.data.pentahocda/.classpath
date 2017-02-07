@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="lib/gson-2.8.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/libxml-7.0.0.0-25.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/libbase-7.0.0.0-25.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/pentaho-reporting-engine-classic-extensions-cda-7.0.0.0-25.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/pentaho-reporting-engine-classic-core-7.0.0.0-25.jar"/>

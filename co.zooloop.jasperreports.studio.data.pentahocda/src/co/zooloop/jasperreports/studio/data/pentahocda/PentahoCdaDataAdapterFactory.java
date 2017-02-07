@@ -36,7 +36,7 @@ public class PentahoCdaDataAdapterFactory implements DataAdapterFactory {
         descriptor.getDataAdapter().setBaseUrl("");
         descriptor.getDataAdapter().setUsername(""); //$NON-NLS-1$
         descriptor.getDataAdapter().setPassword(""); //$NON-NLS-1$
-        descriptor.getDataAdapter().setSugarMode(false);
+        descriptor.getDataAdapter().setPentaho5(true);
         
         return descriptor;
     }

@@ -10,7 +10,7 @@ public class PentahoCdaDataAdapterImpl  extends AbstractDataAdapter implements  
 	private String path;
 	private String file;
 
-	private boolean sugarMode;
+	private boolean pentaho5;
 
 	private transient String baseUrl;
 	
@@ -56,12 +56,12 @@ public class PentahoCdaDataAdapterImpl  extends AbstractDataAdapter implements  
 		this.file = file;
 	}
 
-	public boolean isSugarMode() {
-		return sugarMode;
+	public boolean isPentaho5() {
+		return pentaho5;
 	}
 
-	public void setSugarMode(boolean sugarMode) {
-		this.sugarMode = sugarMode;
+	public void setPentaho5(boolean pentaho5) {
+		this.pentaho5 = pentaho5;
 	}
 
 	public String getBaseUrl() {

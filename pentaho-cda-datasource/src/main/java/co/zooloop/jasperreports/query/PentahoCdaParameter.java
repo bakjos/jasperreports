@@ -10,6 +10,7 @@ public class PentahoCdaParameter implements JRValueParameter {
 
 	private String name;
 	private Object value;
+	private String valueClassName;
 
 	public PentahoCdaParameter(String name, Object value) {
 		super();
@@ -37,11 +38,21 @@ public class PentahoCdaParameter implements JRValueParameter {
 	}
 
 	public Class<?> getValueClass() {
-		return this.value != null ? this.value.getClass() : null;
+		if ( valueClassName == null ) {
+			return this.value != null ? this.value.getClass() : null;
+		}
+		try {
+			return Class.forName(valueClassName);
+		} catch (ClassNotFoundException e) {
+			return null;
+		}
 	}
 
 	public String getValueClassName() {
-		return this.value != null ? this.value.getClass().getName() : null;
+		if ( valueClassName == null ) {
+			return this.value != null ? this.value.getClass().getName() : null;
+		}
+		return valueClassName;
 	}
 
 	public boolean isSystemDefined() {
@@ -77,6 +88,13 @@ public class PentahoCdaParameter implements JRValueParameter {
 	}
 
 	public void setValue(Object value) {
+		this.value = value;
+	}
+	
+	
+
+	public void setValueClassName(String valueClassName) {
+		this.valueClassName = valueClassName;
 	}
 
 	@Override
