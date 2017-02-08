@@ -3,14 +3,111 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<groupId>co.zooloop.jasperreports.studio.data.pentahocda</groupId>
+		<groupId>com.jaspersoft.studio.community-edition</groupId>
 		<artifactId>plugins</artifactId>
 		<version>6.4.1-SNAPSHOT</version>
 		<relativePath>../aggregator/plugins/</relativePath>
 	</parent>
 
-	<groupId>co.zooloop.jasperreports.studio</groupId>
+
+	<groupId>co.zooloop.jasperreports</groupId>
 	<artifactId>co.zooloop.jasperreports.studio.data.pentahocda</artifactId>
 	<packaging>eclipse-plugin</packaging>
-	<version>1.0</version>
+	<version>1.0.0-SNAPSHOT</version>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>process-resources</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactItems>
+						<artifactItem>
+							<groupId>co.zooloop.jasperreports</groupId>
+							<artifactId>pentaho-cda-datasource</artifactId>
+							<version>1.0.0</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>./lib/</outputDirectory>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>com.google.code.gson</groupId>
+							<artifactId>gson</artifactId>
+							<version>2.8.0</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>./lib/</outputDirectory>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>pentaho-library</groupId>
+							<artifactId>libbase</artifactId>
+							<version>7.0.0.0-25</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>./lib/</outputDirectory>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>pentaho-library</groupId>
+							<artifactId>libxml</artifactId>
+							<version>7.0.0.0-25</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>./lib/</outputDirectory>
+						</artifactItem>
+
+
+						<artifactItem>
+							<groupId>pentaho-reporting-engine</groupId>
+							<artifactId>pentaho-reporting-engine-classic-core</artifactId>
+							<version>7.0.0.0-25</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>./lib/</outputDirectory>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>pentaho-reporting-engine</groupId>
+							<artifactId>pentaho-reporting-engine-classic-extensions-cda</artifactId>
+							<version>7.0.0.0-25</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>./lib/</outputDirectory>
+						</artifactItem>
+
+						<artifactItem>
+							<groupId>commons-httpclient</groupId>
+							<artifactId>commons-httpclient</artifactId>
+							<version>3.0.1</version>
+							<type>jar</type>
+							<overWrite>true</overWrite>
+							<outputDirectory>./lib/</outputDirectory>
+						</artifactItem>
+
+					</artifactItems>
+
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
+	<repositories>
+		<repository>
+			<id>pentaho</id>
+			<url>http://repository.pentaho.org/artifactory/repo</url>
+		</repository>
+	</repositories>
+	
 </project> 
