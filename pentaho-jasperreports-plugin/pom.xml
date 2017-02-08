@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.pentaho</groupId>
+		<artifactId>pentaho-ce-jar-parent-pom</artifactId>
+		<version>1.2.11</version>
+	</parent>
+
+	<groupId>co.zooloop.pentaho</groupId>
+	<artifactId>jasperreports-plugin</artifactId>
+	<version>1.0.0</version>
+	<packaging>pom</packaging>
+
+
+	<modules>
+		<module>pentaho</module>
+		<module>assemblies</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>co.zooloop.jasperreports</groupId>
+				<artifactId>pentaho-cda-datasource</artifactId>
+				<version>1.0.0</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+
+	<repositories>
+		<repository>
+			<id>pentaho-releases</id>
+			<url>http://repository.pentaho.org/artifactory/repo/</url>
+		</repository>
+	</repositories>
+
+
+
+</project>
