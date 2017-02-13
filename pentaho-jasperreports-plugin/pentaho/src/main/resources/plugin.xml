@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin title="Jasper Reports" name="jasper-reports"> <!--loader="OVERRIDING"-->
+
+	<lifecycle-listener class="co.zooloop.jasperreports.JasperLifecycleListener"/>
+
+	<content-types>
+		<static-paths>
+			<static-path url="/jasperreports/resources" localFolder="resources"/>
+		</static-paths>
+
+		<content-type type="jrxml" mime-type="text/xml">
+    		<title>Jasper Report Definition</title>
+     		<description>Jasper Report Definition</description>
+	    	<icon-url>content/jasperreports/resources/jasperreports.png</icon-url>
+	    	<meta-provider>co.zooloop.jasperreports.JasperDefinitionFileMetaProvider</meta-provider>
+	      	<operations>
+		        <operation>
+		          	<id>RUN</id>
+		        </operation>
+		        <operation>
+		          	<id>NEWWINDOW</id>
+		        </operation>
+		      </operations>
+    	</content-type>
+    	
+    	<content-type type="jasper" mime-type="text/html">
+    		<title>Jasper Compiled Report</title>
+     		<description>Jasper Compiled Report</description>
+	    	<icon-url>content/jasper/resources/jasper.png</icon-url>
+	    	<meta-provider>co.zooloop.jasperreports.JasperCompiledFileMetaProvider</meta-provider>
+	      	<operations>
+		        <operation>
+		          	<id>RUN</id>
+		        </operation>
+		        <operation>
+		          	<id>NEWWINDOW</id>
+		        </operation>
+		      </operations>
+    	</content-type>
+	</content-types>
+
+	<!--
+
+	<overlays>
+		<overlay id="startup.cda" resourcebundle="api/repos/data-access/resources/messages/messages.properties">
+			<menubar id="toolsmenu">
+	        	<menubarseparator id="openSeparator" insertafter="refreshmenu"/>
+	        	<menuitem id="cdaCacheManager" label="CDA Cache Manager" command="mantleXulHandler.openUrl('CDA Cache Manager','CDA Cache Manager','plugin/cda/api/manageCache')"/>
+	      	</menubar>
+	      	<menubar id="refreshmenu">
+	        	<menuitem id="cdaClearCache" insertafter="purgeReportingDataCacheMenuItem" label="CDA Cache" command="mantleXulHandler.openUrl('CDA Cache','CDA Cache','plugin/cda/api/clearCache')"/>
+	      	</menubar>
+	    </overlay>
+  	</overlays>-->
+
+</plugin>

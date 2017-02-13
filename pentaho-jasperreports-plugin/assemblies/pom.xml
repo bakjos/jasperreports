@@ -22,4 +22,110 @@
 		<module>jasperreports</module>
 	</modules>
 
+	<dependencies>
+	
+		<dependency>
+			<groupId>co.zooloop.jasperreports</groupId>
+			<artifactId>pentaho-cda-datasource</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports</artifactId>
+			<version>6.4.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.8.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+			<version>3.0.1</version>
+			<optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<dependency>
+			<groupId>co.zooloop.pentaho</groupId>
+			<artifactId>jasperreports-pentaho</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>pentaho</groupId>
+			<artifactId>cpf-core</artifactId>
+			<version>7.0.0.0-25</version>
+		</dependency>
+		<dependency>
+			<groupId>pentaho</groupId>
+			<artifactId>cpf-pentaho</artifactId>
+			<version>7.0.0.0-25</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<overwrite>true</overwrite>
+							<outputDirectory>${basedir}/target/processed</outputDirectory>
+							<resources>
+								<resource>
+									<directory>../pentaho/src/main/resources</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+							<nonFilteredFileExtensions>
+								<nonFilteredFileExtension>js</nonFilteredFileExtension>
+								<nonFilteredFileExtension>css</nonFilteredFileExtension>
+								<nonFilteredFileExtension>ico</nonFilteredFileExtension>
+								<nonFilteredFileExtension>psd</nonFilteredFileExtension>
+							</nonFilteredFileExtensions>
+							<supportMultiLineFiltering>false</supportMultiLineFiltering>
+						</configuration>
+					</execution>
+					<execution>
+						<id>copy-assembly-resources</id>
+						<phase>process-sources</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<overwrite>true</overwrite>
+							<outputDirectory>${basedir}/target/</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/src/main/resources</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>

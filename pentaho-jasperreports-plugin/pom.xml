@@ -20,15 +20,6 @@
 		<module>assemblies</module>
 	</modules>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>co.zooloop.jasperreports</groupId>
-				<artifactId>pentaho-cda-datasource</artifactId>
-				<version>1.0.0</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 
 
 	<repositories>
@@ -36,8 +27,64 @@
 			<id>pentaho-releases</id>
 			<url>http://repository.pentaho.org/artifactory/repo/</url>
 		</repository>
+
+
+		<repository>
+			<id>jasperreports</id>
+			<url>http://jasperreports.sourceforge.net/maven2</url>
+		</repository>
+		<repository>
+			<id>jaspersoft-third-party</id>
+			<url>http://jaspersoft.artifactoryonline.com/jaspersoft/third-party-ce-artifacts/</url>
+		</repository>
+
+
+		<repository>
+			<id>jasperserver releases</id>
+			<url>http://jaspersoft.artifactoryonline.com/jaspersoft/jrs-ce-releases/</url>
+		</repository>
+
+		<repository>
+			<id>jasper report releases</id>
+			<url>http://jaspersoft.artifactoryonline.com/jaspersoft/jr-ce-releases/</url>
+		</repository>
+
+		<repository>
+			<id>jboss-releases</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/releases/</url>
+		</repository>
+
+		<repository>
+			<id>jboss-thirdparty</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
+		</repository>
+
+		<repository>
+			<id>jboss-public-repository-group</id>
+			<name>JBoss Public Maven Repository Group</name>
+			<url>http://repository.jboss.org/nexus/content/groups/public/</url>
+		</repository>
+		<repository>
+			<id>jboss-developer-repository-group</id>
+			<name>JBoss Developer Maven Repository Group</name>
+			<url>http://repository.jboss.org/nexus/content/groups/developer/</url>
+		</repository>
+		<repository>
+			<id>jboss-techpreview</id>
+			<name>JBoss Tech Preview</name>
+			<url>https://maven.repository.redhat.com/techpreview/all/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>jboss-earlyaccess</id>
+			<name>JBoss Early Access</name>
+			<url>https://maven.repository.redhat.com/earlyaccess/all/</url>
+		</repository>
+
+		<repository>
+			<id>jaspersoft-third-party2</id>
+			<url>http://jaspersoft.artifactoryonline.com/jaspersoft/jaspersoft-repo/</url>
+		</repository>
 	</repositories>
-
-
 
 </project>
