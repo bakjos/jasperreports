@@ -11,19 +11,7 @@ public interface PentahoCdaDataAdapter extends DataAdapter {
 	String getPassword();
 
 	void setPassword(String password);
-
-	String getSolution();
-
-	void setSolution(String solution);
-
-	String getPath();
-
-	void setPath(String path);
-
-	String getFile();
-
-	void setFile(String file);
-
+	
 	boolean isPentaho5();
 
 	void setPentaho5(boolean pentaho5);
@@ -32,8 +20,6 @@ public interface PentahoCdaDataAdapter extends DataAdapter {
 		
 	void setBaseUrl(String baseUrl);
 	
-	String getDataAccessId();
-
-	void setDataAccessId(String dataAccessId);
+	
 
 }

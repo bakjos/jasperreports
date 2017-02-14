@@ -27,29 +27,32 @@
 		<field name="name" type="string">
 			<bind-xml name="name" node="element" />
 		</field>
+		<!-- 
 		<field name="path" type="string">
 			<bind-xml name="path" node="element" />
-		</field>
+		</field>  -->
 		<field name="username" type="string">
 			<bind-xml name="username" node="element" />
 		</field>
 		<field name="password" type="string">
 			<bind-xml name="password" node="element" />
 		</field>
+		<!-- 
 		<field name="solution" type="string">
             <bind-xml name="solution" node="element" />
         </field>
         <field name="file" type="string">
             <bind-xml name="file" node="element" />
-        </field>
+        </field>  -->
         <field name="baseUrl" type="string">
             <bind-xml name="baseUrl" node="element" />
         </field>
+        
         <field name="pentaho5" type="boolean">
             <bind-xml name="pentaho5" node="element" />
         </field>
-        <field name="dataAccessId" type="string">
+        <!-- <field name="dataAccessId" type="string">
 			<bind-xml name="dataAccessId" node="element" />
-		</field>
+		</field>  -->
 	</class>
 </mapping>

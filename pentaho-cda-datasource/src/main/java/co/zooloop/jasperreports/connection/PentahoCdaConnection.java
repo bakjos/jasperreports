@@ -44,6 +44,7 @@ import org.pentaho.reporting.engine.classic.extensions.datasources.cda.CdaRespon
 import org.pentaho.reporting.libraries.base.util.IOUtils;
 import org.pentaho.reporting.libraries.base.util.ObjectUtilities;
 
+import co.zooloop.jasperreports.query.PentahoCdaQueryDefinition;
 import net.sf.jasperreports.engine.JRException;
 
 public class PentahoCdaConnection implements Connection {
@@ -55,12 +56,6 @@ public class PentahoCdaConnection implements Connection {
 	private String username;
 	private String password;
 
-	private String solution;
-	private String path;
-	private String file;
-	
-	private String dataAccessId;
-
 	private boolean sugarMode;
 
 	private String baseUrl;
@@ -71,26 +66,20 @@ public class PentahoCdaConnection implements Connection {
 
 	private transient HttpClient client;
 
-	public PentahoCdaConnection(String username, String password, String solution, String path, String file,
-			boolean sugarMode, String baseUrl, String dataAccessId) {
+	public PentahoCdaConnection(String username, String password,
+			boolean sugarMode, String baseUrl) {
 		super();
 		this.username = username;
 		this.password = password;
-		this.solution = solution;
-		this.path = path;
-		this.file = file;
 		this.sugarMode = sugarMode;
 		this.baseUrl = baseUrl;
-		this.dataAccessId = dataAccessId;
+		
 		
 		try {
 			localBackend = ObjectUtilities.loadAndInstantiate( className, CdaQueryBackend.class, CdaQueryBackend.class );
 			localBackend.setBaseUrl(baseUrl);
-			localBackend.setFile(file);
 			localBackend.setPassword(password);
 			localBackend.setUsername(username);
-			localBackend.setPath(path);
-			localBackend.setSolution(solution);
 			localBackend.setSugarMode(sugarMode);
 			local = true;
 		} catch(Exception ex) {
@@ -114,30 +103,7 @@ public class PentahoCdaConnection implements Connection {
 		this.password = password;
 	}
 
-	public String getSolution() {
-		return solution;
-	}
-
-	public void setSolution(String solution) {
-		this.solution = solution;
-	}
-
-	public String getPath() {
-		return path;
-	}
-
-	public void setPath(String path) {
-		this.path = path;
-	}
-
-	public String getFile() {
-		return file;
-	}
-
-	public void setFile(String file) {
-		this.file = file;
-	}
-
+	
 	public boolean isSugarMode() {
 		return sugarMode;
 	}
@@ -154,14 +120,7 @@ public class PentahoCdaConnection implements Connection {
 		this.baseUrl = baseUrl;
 	}
 	
-	
-	public String getDataAccessId() {
-		return dataAccessId;
-	}
 
-	public void setDataAccessId(String dataAccessId) {
-		this.dataAccessId = dataAccessId;
-	}
 
 	public <T> T unwrap(Class<T> iface) throws SQLException {
 		return null;
@@ -343,7 +302,7 @@ public class PentahoCdaConnection implements Connection {
 	    }
 	  }
 
-	public String createURL(final String method, final Map<String, String> extraParameter) {
+	public String createURL( final PentahoCdaQueryDefinition queryDef, final String method, final Map<String, String> extraParameter) {
 		final String baseURL = getBaseUrl();
 		
 		final String basePath = isSugarMode() ? "/plugin/cda/api/" : "/content/cda/";
@@ -354,14 +313,16 @@ public class PentahoCdaConnection implements Connection {
 		url.append(method);
 		url.append("?");
 		url.append("outputType=xml");
-		url.append("&path=");
-		url.append(encodeParameter(getPath()));
-
-		if (!isSugarMode()) {
-			url.append("&solution=");
-			url.append(encodeParameter(getSolution()));
-			url.append("&file=");
-			url.append(encodeParameter(getFile()));
+		
+		if ( queryDef != null ) {
+			url.append("&path=");
+			url.append(encodeParameter(queryDef.getPath()));
+			if (!isSugarMode()) {
+				url.append("&solution=");
+				url.append(encodeParameter(queryDef.getSolution()));
+				url.append("&file=");
+				url.append(encodeParameter(queryDef.getFile()));
+			}
 		}
 		for (final Map.Entry<String, String> entry : extraParameter.entrySet()) {
 			final String key = encodeParameter(entry.getKey());
@@ -376,14 +337,17 @@ public class PentahoCdaConnection implements Connection {
 		return url.toString();
 	}
 	
-	public TypedTableModel fetchData (final String method,  Map<String, String> extraParameter) throws JRException {
+	public TypedTableModel fetchData (final PentahoCdaQueryDefinition queryDef, final String method,  Map<String, String> extraParameter) throws JRException {
 		if ( !local ) {
 			
 			if ( extraParameter == null) {
-				extraParameter = new HashMap();
+				extraParameter = new HashMap<String, String>();
+			}
+			if ( queryDef != null) {
+				extraParameter.put("dataAccessId", queryDef.getDataAccessId());
 			}
 			
-			String url = createURL(method, extraParameter);
+			String url = createURL(queryDef, method, extraParameter);
 			
 			final GetMethod httpCall = new GetMethod( url.toString() );
 			final HttpClient client = getHttpClient();
@@ -417,6 +381,9 @@ public class PentahoCdaConnection implements Connection {
 			} 
 		} else {
 			try {
+				localBackend.setPath(queryDef.getPath());
+				localBackend.setFile(queryDef.getFile());
+				localBackend.setSolution(queryDef.getSolution());
 				return localBackend.fetchData(null, method, extraParameter);
 			} catch (ReportDataFactoryException e) {
 				throw new JRException("Failed to retrieve data: " + e.getMessage());	
@@ -427,8 +394,7 @@ public class PentahoCdaConnection implements Connection {
 
 	public String test() throws JRException {
 		Map<String, String> extraParameters = new HashMap<String, String>();
-    	extraParameters.put("dataAccessId", getDataAccessId());
-		fetchData("listParameters", extraParameters);
+		fetchData(null, "getCdaList", extraParameters);
 		return null;
 	}
 

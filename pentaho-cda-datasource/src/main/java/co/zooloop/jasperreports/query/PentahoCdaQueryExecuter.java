@@ -1,6 +1,9 @@
 package co.zooloop.jasperreports.query;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,6 +40,7 @@ import net.sf.jasperreports.engine.JRPropertiesUtil;
 import net.sf.jasperreports.engine.JRReport;
 import net.sf.jasperreports.engine.JRRuntimeException;
 import net.sf.jasperreports.engine.JRValueParameter;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.JasperReportsContext;
 import net.sf.jasperreports.engine.design.JRAbstractCompiler;
 import net.sf.jasperreports.engine.design.JRClassGenerator;
@@ -55,6 +59,8 @@ import net.sf.jasperreports.engine.fill.JRFillVariable;
 import net.sf.jasperreports.engine.query.JRAbstractQueryExecuter;
 import net.sf.jasperreports.engine.type.WhenResourceMissingTypeEnum;
 import net.sf.jasperreports.engine.util.JRStringUtil;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.engine.xml.JRXmlWriter;
 
 public class PentahoCdaQueryExecuter extends JRAbstractQueryExecuter {
 
@@ -63,10 +69,11 @@ public class PentahoCdaQueryExecuter extends JRAbstractQueryExecuter {
 	private Map<String, Object> parameters;
 	private PentahoCdaQueryWrapper wrapper;
 	private boolean directParameters;
-	private Map<String, PentahoCdaParameter> cdaParameterMap; 
+	//private Map<String, PentahoCdaParameter> cdaParameterMap;
+	private PentahoCdaQueryDefinition queryDefinition;
 
 	public PentahoCdaQueryExecuter(JasperReportsContext jasperReportsContext, JRDataset dataset,
-			Map<String, ? extends JRValueParameter> parameters) {
+			Map<String, ? extends JRValueParameter> parameters) throws JRException {
 		this(jasperReportsContext, dataset, parameters, false);
 	}
 
@@ -131,90 +138,113 @@ public class PentahoCdaQueryExecuter extends JRAbstractQueryExecuter {
 	}
 
 	public PentahoCdaQueryExecuter(JasperReportsContext jasperReportsContext, JRDataset dataset,
-			Map<String, ? extends JRValueParameter> parameters, boolean directParameters) {
+			Map<String, ? extends JRValueParameter> parameters, boolean directParameters) throws JRException {
 		super(jasperReportsContext, dataset, parameters);
 		this.directParameters = directParameters;
 		this.reportParameters = parameters;
-		this.parameters = new HashMap();
+		this.parameters = new HashMap<String, Object>();
 		this.parseQuery();
-		
+
 		String queryString = this.getQueryString();
-		if ( !StringUtils.isBlank(queryString) ) {
-			
-			net.sf.jasperreports.engine.design.JasperDesign jasperDesign  = (net.sf.jasperreports.engine.design.JasperDesign)jasperReportsContext.getValue("JasperDesign");
-			JRExpressionCollector expressionCollector = JRExpressionCollector.collector(jasperReportsContext, jasperDesign);
+		if (!StringUtils.isBlank(queryString)) {
+
+			net.sf.jasperreports.engine.design.JasperDesign jasperDesign = (net.sf.jasperreports.engine.design.JasperDesign) jasperReportsContext
+					.getValue("JasperDesign");
+
+			if (jasperDesign == null) {
+				JasperReport jasperReport = (JasperReport) parameters.get("JASPER_REPORT").getValue();
+				if (jasperReport != null) {
+					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+					JRXmlWriter.writeReport(jasperReport, bos, "UTF-8");
+					try {
+						bos.flush();
+					} catch (IOException e) {
+						throw new JRException(
+								"Couldn't flush the OutputStreamn while is loading the JasperDesign object", e);
+					}
+					ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+					jasperDesign = JRXmlLoader.load(bis);
+					;
+				}
+			}
+
+			if (jasperDesign == null) {
+				throw new JRException("Couldn't find JasperDesign object");
+			}
+
+			JRExpressionCollector expressionCollector = JRExpressionCollector.collector(jasperReportsContext,
+					jasperDesign);
 			Map<String, JRExpression> expressionMap = new HashMap<String, JRExpression>();
 			GsonBuilder builder = new GsonBuilder();
-	        Gson gson = builder.create();
-	        cdaParameterMap = new HashMap<String, PentahoCdaParameter>();
+			Gson gson = builder.create();
 			
-			List<PentahoCdaParameter> params =  gson.fromJson(queryString, new TypeToken<ArrayList<PentahoCdaParameter>>() {}.getType());
+			queryDefinition = gson.fromJson(queryString, PentahoCdaQueryDefinition.class);
 			
-			if ( dataset instanceof JRFillDataset) {
+			Map<String, PentahoCdaParameter> cdaParameterMap = new HashMap<String, PentahoCdaParameter>();
+
 			
-				for ( PentahoCdaParameter param:  params) {
-					
-					JRDesignExpression expression = new JRDesignExpression((String)param.getValue());
-					expressionCollector.addExpression(expression);
-					expression.setId(expressionCollector.getExpressionId(expression));
-					expressionMap.put(param.getName(), expression);
-					cdaParameterMap.put(param.getName(), param);
-					
+
+			if (dataset instanceof JRFillDataset) {
+				if ( queryDefinition.getParameters() != null ) {
+					for (PentahoCdaParameter param : queryDefinition.getParameters()) {
+						JRDesignExpression expression = new JRDesignExpression((String) param.getValue());
+						expressionCollector.addExpression(expression);
+						expression.setId(expressionCollector.getExpressionId(expression));
+						expressionMap.put(param.getName(), expression);
+						cdaParameterMap.put(param.getName(), param);
+					}
 				}
-				
+
 				String nameSuffix = createNameSuffix();
-				
+
 				String unitName = getUnitName(jasperDesign, dataset, nameSuffix);
 				JREvaluator evaluator = null;
-				
-				JRSourceCompileTask sourceTask = new JRSourceCompileTask(jasperDesign, jasperDesign.getMainDesignDataset(), expressionCollector, unitName);
-				try {
-					JRCompilationSourceCode sourceCode = JRClassGenerator.generateClass(sourceTask);
-					JRCompilationUnit[] units = new JRCompilationUnit[] {
-							new JRCompilationUnit(unitName, sourceCode, null, expressionCollector.getExpressions(dataset), sourceTask)
-					};
-					String classpath = JRPropertiesUtil.getInstance(jasperReportsContext).getProperty(JRCompiler.COMPILER_CLASSPATH);
-					PentahoCdaQueryCompiler compiler = new PentahoCdaQueryCompiler(jasperReportsContext);
-					compiler.compileUnits(units, classpath);
-					evaluator = compiler.loadEvaluatorFinal(units[0].getCompileData(), unitName);
-					
-					WhenResourceMissingTypeEnum whenResourceMissingType = dataset.getWhenResourceMissingTypeValue();
-					boolean ignoreNPE = 
-						JRPropertiesUtil.getInstance(jasperReportsContext)
-							.getBooleanProperty(
-								jasperDesign, 
-								JREvaluator.PROPERTY_IGNORE_NPE, 
-								true
-								);
-					
-					
-					
-					evaluator.init(toMap((JRFillParameter[])dataset.getParameters()), toMap((JRFillField[])dataset.getFields()),toMap((JRFillVariable[])dataset.getVariables()), whenResourceMissingType, ignoreNPE);
-					
-				} catch (JRException e1) {
-					
+
+				JRSourceCompileTask sourceTask = new JRSourceCompileTask(jasperDesign,
+						jasperDesign.getMainDesignDataset(), expressionCollector, unitName);
+
+				JRCompilationSourceCode sourceCode = JRClassGenerator.generateClass(sourceTask);
+				JRCompilationUnit[] units = new JRCompilationUnit[] { new JRCompilationUnit(unitName, sourceCode, null,
+						expressionCollector.getExpressions(dataset), sourceTask) };
+				String classpath = JRPropertiesUtil.getInstance(jasperReportsContext)
+						.getProperty(JRCompiler.COMPILER_CLASSPATH);
+				PentahoCdaQueryCompiler compiler = new PentahoCdaQueryCompiler(jasperReportsContext);
+				String results = compiler.compileUnits(units, classpath);
+
+				if (!StringUtils.isBlank(results)) {
+					throw new JRException("Error compiling the report " + results);
 				}
-				
-		        if ( params != null ) {
-		        	for ( PentahoCdaParameter param:  params) {
-		        		if ( evaluator != null ) {
-			        		if ( expressionMap.containsKey(param.getName()) ) {
-			        			JRExpression expression = expressionMap.get(param.getName());
-			        			Object value = param.getValue();
-			        			try {
-			        				value = evaluator.evaluate(expression);
-			        				cdaParameterMap.get(param.getName()).setValue(value);
+
+				evaluator = compiler.loadEvaluatorFinal(units[0].getCompileData(), unitName);
+
+				WhenResourceMissingTypeEnum whenResourceMissingType = dataset.getWhenResourceMissingTypeValue();
+				boolean ignoreNPE = JRPropertiesUtil.getInstance(jasperReportsContext).getBooleanProperty(jasperDesign,
+						JREvaluator.PROPERTY_IGNORE_NPE, true);
+
+				evaluator.init(toMap((JRFillParameter[]) dataset.getParameters()),
+						toMap((JRFillField[]) dataset.getFields()), toMap((JRFillVariable[]) dataset.getVariables()),
+						whenResourceMissingType, ignoreNPE);
+
+				if (queryDefinition.getParameters() != null) {
+					for (PentahoCdaParameter param : queryDefinition.getParameters()) {
+						if (evaluator != null) {
+							if (expressionMap.containsKey(param.getName())) {
+								JRExpression expression = expressionMap.get(param.getName());
+								Object value = param.getValue();
+								try {
+									value = evaluator.evaluate(expression);
+									cdaParameterMap.get(param.getName()).setValue(value);
 								} catch (JRExpressionEvalException e) {
-									
+
 								}
-			        		}
-		        		} else {
-		        			
-		        		}
-		        	}
-		        }
+							}
+						} else {
+
+						}
+					}
+				}
 			}
-	        
+
 		}
 	}
 
@@ -254,11 +284,11 @@ public class PentahoCdaQueryExecuter extends JRAbstractQueryExecuter {
 
 			connection = this.processConnection((JRValueParameter) this.reportParameters.get("REPORT_CONNECTION"));
 			if (connection == null) {
-				throw new JRException("No MongoDB connection");
+				throw new JRException("No PentahoCDAConnection specified");
 			}
 		}
 
-		this.wrapper = new PentahoCdaQueryWrapper(cdaParameterMap, connection, this.parameters);
+		this.wrapper = new PentahoCdaQueryWrapper(this.queryDefinition, connection, this.parameters);
 		return new PentahoCdaDataSource(this.wrapper);
 	}
 
@@ -277,8 +307,10 @@ public class PentahoCdaQueryExecuter extends JRAbstractQueryExecuter {
 						+ parameterValue);
 			}
 
-			return this.processParameter(parameterName, parameterValue);
+			this.processParameter(parameterName, parameterValue);
 		}
+
+		return "$P{" + parameterName + "}";
 	}
 
 	private String processParameter(String parameterName, Object parameterValue) {
@@ -337,10 +369,8 @@ public class PentahoCdaQueryExecuter extends JRAbstractQueryExecuter {
 		return this.parameters;
 	}
 
-	public Map<String, PentahoCdaParameter> getCdaParameterMap() {
-		return cdaParameterMap;
+	public PentahoCdaQueryDefinition getQueryDefinition() {
+		return queryDefinition;
 	}
 	
-	
-
 }

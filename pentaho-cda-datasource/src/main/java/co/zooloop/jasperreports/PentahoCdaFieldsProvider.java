@@ -68,7 +68,7 @@ public class PentahoCdaFieldsProvider {
 			  
 			  queryExecuter = new PentahoCdaQueryExecuter(context, dataset, newValueParameters);
 			  
-			  wrapper = new PentahoCdaQueryWrapper(queryExecuter.getCdaParameterMap(), connection, queryExecuter.getParameters());
+			  wrapper = new PentahoCdaQueryWrapper(queryExecuter.getQueryDefinition(), connection, queryExecuter.getParameters());
 			  
 			  TypedTableModel  model = wrapper.model;
 			  

@@ -11,8 +11,8 @@
 
 	<context:annotation-config />
 	
-	<bean id="jrxml" class="co.zooloop.jasperreports.JrXmlContentGenerator" scope="prototype" />
-	<bean id="jasper" class="co.zooloop.jasperreports.JasperContentGenerator" scope="prototype" />
+	<bean id="jrxml.run" class="co.zooloop.jasperreports.JrXmlContentGenerator" scope="prototype" />
+	<bean id="jasper.run" class="co.zooloop.jasperreports.JasperContentGenerator" scope="prototype" />
 
 	
 	<!-- JAX-RS beans -->

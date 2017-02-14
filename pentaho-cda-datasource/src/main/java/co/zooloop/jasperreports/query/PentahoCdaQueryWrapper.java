@@ -25,14 +25,15 @@ public class PentahoCdaQueryWrapper{
     
     private PentahoCdaConnection connection;
     private Map<String, Object> parameters;
-    private Map<String, PentahoCdaParameter> cdaParameterMap;
+    
+    private PentahoCdaQueryDefinition queryDef;
     public TypedTableModel model;
    
 
-    public PentahoCdaQueryWrapper( Map<String, PentahoCdaParameter> cdaParameterMap, PentahoCdaConnection connection, Map<String, Object> parameters) throws JRException {
+    public PentahoCdaQueryWrapper( PentahoCdaQueryDefinition queryDef, PentahoCdaConnection connection, Map<String, Object> parameters) throws JRException {
         this.connection = connection;
         this.parameters = parameters;
-        this.cdaParameterMap = cdaParameterMap;
+        this.queryDef = queryDef;
         this.processQuery();
     }
 
@@ -40,7 +41,7 @@ public class PentahoCdaQueryWrapper{
         logger.info("Processing CDA query");
         
     	Map<String, String> extraParameters = new HashMap<String, String>();
-    	extraParameters.put(DATA_ACCESS_ID, connection.getDataAccessId());
+    	extraParameters.put(DATA_ACCESS_ID, queryDef.getDataAccessId());
     	
     	if ( parameters != null) {
     		for ( Map.Entry<String, Object> entry: parameters.entrySet() ) {
@@ -50,9 +51,13 @@ public class PentahoCdaQueryWrapper{
     		}
     	}
     	
-    	if ( cdaParameterMap != null) {
+    	
+    	
+    	
+    	
+    	if ( queryDef.getParameters() != null) {
     		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-    		for (PentahoCdaParameter parameter: cdaParameterMap.values()) {
+    		for (PentahoCdaParameter parameter: queryDef.getParameters()) {
     			String paramName = "param" + parameter.getName();
     			if ( parameter.getValue() != null) {
     				if ( Date.class.getName().equals(parameter.getValueClassName()) ) {
@@ -76,7 +81,7 @@ public class PentahoCdaQueryWrapper{
     		}
     	}
     	
-       	model = connection.fetchData(METHOD_DO_QUERY, extraParameters);
+       	model = connection.fetchData(queryDef, METHOD_DO_QUERY, extraParameters);
         
     }
 

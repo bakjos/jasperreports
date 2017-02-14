@@ -47,8 +47,7 @@ public class PentahoCdaDataAdapterService extends AbstractDataAdapterService {
 		if (secretService != null) {
 			password = secretService.getSecret("net.sf.jasperreports.data.adapter", password);
 		}
-		this.connection = new PentahoCdaConnection(dataAdapter.getUsername(),password, dataAdapter.getSolution(),
-				dataAdapter.getPath(), dataAdapter.getFile(), dataAdapter.isPentaho5(), dataAdapter.getBaseUrl(), dataAdapter.getDataAccessId());
+		this.connection = new PentahoCdaConnection(dataAdapter.getUsername(),password, dataAdapter.isPentaho5(), dataAdapter.getBaseUrl());
 	}
 
 	public void dispose() {

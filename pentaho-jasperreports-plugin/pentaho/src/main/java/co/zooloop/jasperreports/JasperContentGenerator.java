@@ -19,6 +19,7 @@ import org.pentaho.platform.api.repository2.unified.data.simple.SimpleRepository
 import org.pentaho.platform.engine.core.system.PentahoSystem;
 import org.pentaho.platform.util.UUIDUtil;
 
+import co.zooloop.jasperreports.connection.PentahoCdaConnection;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -62,7 +63,7 @@ public class JasperContentGenerator extends SimpleContentGenerator {
 		
 		JasperReport jasReport = (JasperReport) JRLoader.loadObject(is);
 		Map<String, Object> parameters = new HashMap<String, Object>();
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasReport, parameters);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasReport, parameters, new PentahoCdaConnection(null, null, true, null));
         
         HtmlExporter exporter = new HtmlExporter();
 		
