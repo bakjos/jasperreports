@@ -33,7 +33,7 @@ public class JRExpressionParameterEditingSupport extends EditingSupport
         //cellEditor = new ComboBoxCellEditor(((TableViewer)viewer).getTable(), new String[]{"Y", "N"});
         //cellEditor = new TextCellEditor(((TableViewer)viewer).getTable());
         cellEditor = new JRExpressionCellEditor(((TableViewer)viewer).getTable(), ExpressionEditorSupportUtil
-        		.getReportExpressionContext());
+        		.getReportExtendedExpressionContext());
     }
     protected CellEditor getCellEditor(Object element) {
         return cellEditor;

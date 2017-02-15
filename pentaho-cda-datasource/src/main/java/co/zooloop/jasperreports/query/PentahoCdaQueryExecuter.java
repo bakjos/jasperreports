@@ -36,10 +36,13 @@ import net.sf.jasperreports.engine.JRDataset;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRExpression;
 import net.sf.jasperreports.engine.JRExpressionCollector;
+import net.sf.jasperreports.engine.JRField;
+import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.JRPropertiesUtil;
 import net.sf.jasperreports.engine.JRReport;
 import net.sf.jasperreports.engine.JRRuntimeException;
 import net.sf.jasperreports.engine.JRValueParameter;
+import net.sf.jasperreports.engine.JRVariable;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.JasperReportsContext;
 import net.sf.jasperreports.engine.design.JRAbstractCompiler;
@@ -50,6 +53,7 @@ import net.sf.jasperreports.engine.design.JRCompiler;
 import net.sf.jasperreports.engine.design.JRDesignExpression;
 import net.sf.jasperreports.engine.design.JRReportCompileData;
 import net.sf.jasperreports.engine.design.JRSourceCompileTask;
+import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.fill.JREvaluator;
 import net.sf.jasperreports.engine.fill.JRExpressionEvalException;
 import net.sf.jasperreports.engine.fill.JRFillDataset;
@@ -97,30 +101,6 @@ public class PentahoCdaQueryExecuter extends JRAbstractQueryExecuter {
 		return className;
 	}
 
-	/*
-	 * protected String compileUnits(final JRCompilationUnit[] units, String
-	 * classpath, File tempDirFile) { final INameEnvironment env =
-	 * getNameEnvironment(units);
-	 * 
-	 * final IProblemFactory problemFactory = new
-	 * DefaultProblemFactory(Locale.getDefault());
-	 * 
-	 * final CompilerRequestor requestor = getCompilerRequestor(units);
-	 * 
-	 * final Compiler compiler = new Compiler(env, policy, getJdtSettings(),
-	 * requestor, problemFactory);
-	 * 
-	 * do { CompilationUnit[] compilationUnits =
-	 * requestor.processCompilationUnits();
-	 * 
-	 * compiler.compile(compilationUnits); } while
-	 * (requestor.hasMissingMethods());
-	 * 
-	 * requestor.processProblems();
-	 * 
-	 * return requestor.getFormattedProblems(); }
-	 */
-
 	protected <T> Map<String, T> toMap(T[] array) {
 		Map<String, T> map = new HashMap<String, T>();
 
@@ -148,6 +128,7 @@ public class PentahoCdaQueryExecuter extends JRAbstractQueryExecuter {
 		String queryString = this.getQueryString();
 		if (!StringUtils.isBlank(queryString)) {
 
+		
 			net.sf.jasperreports.engine.design.JasperDesign jasperDesign = (net.sf.jasperreports.engine.design.JasperDesign) jasperReportsContext
 					.getValue("JasperDesign");
 
@@ -172,8 +153,8 @@ public class PentahoCdaQueryExecuter extends JRAbstractQueryExecuter {
 				throw new JRException("Couldn't find JasperDesign object");
 			}
 
-			JRExpressionCollector expressionCollector = JRExpressionCollector.collector(jasperReportsContext,
-					jasperDesign);
+			JRExpressionCollector expressionCollector = new PentahoCdaExpressionCollector(jasperReportsContext);
+			
 			Map<String, JRExpression> expressionMap = new HashMap<String, JRExpression>();
 			GsonBuilder builder = new GsonBuilder();
 			Gson gson = builder.create();
@@ -199,9 +180,9 @@ public class PentahoCdaQueryExecuter extends JRAbstractQueryExecuter {
 
 				String unitName = getUnitName(jasperDesign, dataset, nameSuffix);
 				JREvaluator evaluator = null;
-
-				JRSourceCompileTask sourceTask = new JRSourceCompileTask(jasperDesign,
-						jasperDesign.getMainDesignDataset(), expressionCollector, unitName);
+				
+				JRSourceCompileTask sourceTask = new PentahoCdaQuerySourceCompileTask(jasperDesign,unitName, expressionCollector, 
+						toMap(dataset.getParameters()), toMap(dataset.getFields()), toMap(dataset.getVariables()), dataset.getVariables());
 
 				JRCompilationSourceCode sourceCode = JRClassGenerator.generateClass(sourceTask);
 				JRCompilationUnit[] units = new JRCompilationUnit[] { new JRCompilationUnit(unitName, sourceCode, null,

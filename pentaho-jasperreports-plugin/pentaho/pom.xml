@@ -188,33 +188,12 @@
 			<artifactId>cpf-pentaho</artifactId>
 			<version>7.0.0.0-25</version>
 		</dependency>
-<!--  
+		
 		<dependency>
-			<groupId>com.jaspersoft.jasperserver</groupId>
-			<artifactId>jasperserver-war-jar</artifactId>
-			<version>6.3.0</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.amazonaws</groupId>
-					<artifactId>aws-java-sdk-redshift</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.amazonaws</groupId>
-					<artifactId>aws-java-sdk-rds</artifactId>
-				</exclusion>
-
-				<exclusion>
-					<groupId>com.amazonaws</groupId>
-					<artifactId>aws-java-sdk-core</artifactId>
-				</exclusion>
-
-				<exclusion>
-					<groupId>com.amazonaws</groupId>
-					<artifactId>aws-java-sdk-core</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.7</version>
 		</dependency>
--->
 
 	</dependencies>
 

@@ -386,7 +386,12 @@ public class PentahoCdaConnection implements Connection {
 				localBackend.setSolution(queryDef.getSolution());
 				return localBackend.fetchData(null, method, extraParameter);
 			} catch (ReportDataFactoryException e) {
-				throw new JRException("Failed to retrieve data: " + e.getMessage());	
+				if ( e.getCause() != null) {
+					throw new JRException("Failed to retrieve data", e.getCause());
+				} else {
+					throw new JRException("Failed to retrieve data", e);
+				}
+				
 			}
 		}
 		
