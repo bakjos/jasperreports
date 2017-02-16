@@ -28,16 +28,23 @@ This repository  contains the code of a pentaho plugin to integrate jasperreport
 ## Jasper Studio Usage  
 
   1. Create a new Data Adapter  using the Pentaho CDA Connection option
+  ![DataAdapterWizard01](https://github.com/bakjos/jasperreports/blob/master/docs/DataAdapterWizard01.png?raw=true)
 
   2. Set the configuration, if your pentaho server is 5.x+ the 5.x option should be checked. You can test the connection clicking the test button. The cda plugin should be installed inside the pentaho bussiness server
+  ![DataAdapterWizard02](https://github.com/bakjos/jasperreports/blob/master/docs/DataAdapterWizard02.png?raw=true)
 
   3. When you edit a datasource, select the connection you've created and **PentahoCdaQuery** as language
+  ![DatasetAndQuery01](https://github.com/bakjos/jasperreports/blob/master/docs/DatasetAndQuery01.png?raw=true)
 
   4. Click on browse to select a CDA File. Using double click, you can see a folder's content
+  ![DatasetAndQuery02](https://github.com/bakjos/jasperreports/blob/master/docs/DatasetAndQuery02.png?raw=true)
 
   5. Select a Query, clicking inside the Query table.
+  ![DatasetAndQuery03](https://github.com/bakjos/jasperreports/blob/master/docs/DatasetAndQuery03.png?raw=true)
 
   6. To edit the parameter values, you can click inside the value cell and then click on "..." button
+  ![DatasetAndQuery04](https://github.com/bakjos/jasperreports/blob/master/docs/DatasetAndQuery04.png?raw=true)
 
   7. Click on Read Fields to load all the columns from the datasource
+  ![DatasetAndQuery06](https://github.com/bakjos/jasperreports/blob/master/docs/DatasetAndQuery06.png?raw=true)
 
