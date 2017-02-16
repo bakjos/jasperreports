@@ -26,7 +26,7 @@
     	<content-type type="jasper" mime-type="text/html">
     		<title>Jasper Compiled Report</title>
      		<description>Jasper Compiled Report</description>
-	    	<icon-url>content/jasper/resources/jasper.png</icon-url>
+	    	<icon-url>content/jasperreports/resources/jasperreports.png</icon-url>
 	    	<meta-provider>co.zooloop.jasperreports.JasperCompiledFileMetaProvider</meta-provider>
 	      	<operations>
 		        <operation>
