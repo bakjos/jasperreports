@@ -59,7 +59,11 @@ public class JRExpressionParameterEditingSupport extends EditingSupport
     		JRDesignExpression expression = (JRDesignExpression)value;
     		param.setValue(expression.getText());
     	} else {
-    		param.setValue(value.toString());
+    		if ( value != null) {
+    			param.setValue(value.toString());
+    		} else {
+    			param.setValue(null);
+    		}
     	}
     	viewer.update(element, null);
     	editor.notifyModified();

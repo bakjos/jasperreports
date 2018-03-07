@@ -12,7 +12,7 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
-			<version>6.4.0</version>
+			<version>6.5.1</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
@@ -150,7 +150,7 @@
 
 		<repository>
 			<id>pentaho</id>
-			<url>http://repository.pentaho.org/artifactory/repo</url>
+			<url>http://nexus.pentaho.org/content/groups/omni</url>
 		</repository>
 
 	</repositories>

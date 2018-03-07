@@ -14,7 +14,7 @@
 	<artifactId>co.zooloop.jasperreports.studio.data.pentahocda</artifactId>
 	<packaging>eclipse-plugin</packaging>
 	<version>1.0.0-SNAPSHOT</version>
-
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -106,7 +106,7 @@
 	<repositories>
 		<repository>
 			<id>pentaho</id>
-			<url>http://repository.pentaho.org/artifactory/repo</url>
+			<url>http://nexus.pentaho.org/content/groups/omni</url>
 		</repository>
 	</repositories>
 	
